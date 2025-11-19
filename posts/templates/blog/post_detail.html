@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% load static %}
+{% block content %}
+{% block title %}{{ post.title }}{% endblock %}
+
+<div class="container mt-5">
+
+    <article>
+        <h1>{{ post.title }}</h1>
+        <p class="text-muted">
+            Author: {{ post.author.username }} |
+            Published: {{ post.created_at|date:"d M Y" }} |
+            Views: {{ post.views_count }}
+        </p>
+
+        {% if post.image %}
+            <img src="{{ post.image.url }}" class="img-fluid rounded mb-4" alt="{{ post.title }}">
+        {% endif %}
+
+        <div class="post-content mb-5">
+            {{ post.content|linebreaks }}
+        </div>
+
+        <div class="mb-5">
+            {% for tag in post.tags.all %}
+                <a href="{% url 'post:list_by_tag' tag_slug=tag.slug %}" class="badge bg-secondary text-decoration-none me-1">
+                    #{{ tag.name }}
+                </a>
+            {% endfor %}
+        </div>
+    </article>
+
+    <hr>
+
+    <section class="mb-5">
+        </section>
+
+</div>
+<section class="mb-5">
+    <div class="card bg-light">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Comments ({{ post.comments.count }})</h4>
+
+            {% if user.is_authenticated %}
+            <form class="mb-4" method="post">
+                {% csrf_token %}
+
+                {# Рендеринг формы с помощью as_p или crispy #}
+                {{ comment_form.as_p }}
+                {# Или используйте {% crispy comment_form %} если настроено #}
+
+                <button type="submit" class="btn btn-primary mt-2">Submit Comment</button>
+            </form>
+            {% else %}
+            <p class="alert alert-info">
+                Please <a href="{% url 'users:login' %}">log in</a> to leave a comment.
+            </p>
+            {% endif %}
+
+            {% for comment in post.comments.all|dictsort:"created_at" %}
+            <div class="d-flex mb-4">
+                <div class="flex-shrink-0">
+                    <div class="avatar-sm rounded-circle bg-secondary text-white text-center pt-2 me-3" style="width: 40px; height: 40px;">
+                        {{ comment.author.username.0|upper }}
+                    </div>
+                </div>
+                <div class="ms-3">
+                    <div class="fw-bold">{{ comment.author.username }}</div>
+                    <div class="text-muted small">{{ comment.created_at|date:"d M Y, H:i" }}</div>
+                    {{ comment.content|linebreaks }}
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">No comments yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

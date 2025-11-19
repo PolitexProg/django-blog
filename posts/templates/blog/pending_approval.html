@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Awaiting Moderation{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 text-center">
+        <div class="alert alert-warning" role="alert">
+            <h4 class="alert-heading">Post Sent for Moderation!</h4>
+            <p>Thank you for your contribution! Your post has been saved and is awaiting approval by the administrator.</p>
+            <hr>
+            <p class="mb-0">It will appear in the list after it has been approved.</p>
+        </div>
+        <a href="{% url 'post:list' %}" class="btn btn-outline-secondary mt-3">Return to Posts List</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+
+# SQLite database
+*.db
+*.db-journal
+
+# Local settings
+settings/local.py
+.env
+.env.local
+
+# Media files (если не хочешь заливать)
+media/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+

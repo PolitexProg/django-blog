@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Create New Post{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+        <h2 class="mb-4">Create New Post</h2>
+        <div class="card p-4 shadow-sm">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% crispy form %}
+            </form>
+        </div>
+        <p class="text-muted mt-3">Your post will be visible only after administrator approval.</p>
+    </div>
+</div>
+{% endblock %}

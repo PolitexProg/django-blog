@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}All Posts{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1>All Approved Posts</h1>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <div class="btn-group" role="group" aria-label="Post Sorting">
+            <a href="?sort=newest" class="btn btn-outline-primary {% if current_sort == 'newest' %}active{% endif %}">Newest</a>
+            <a href="?sort=views_all" class="btn btn-outline-primary {% if current_sort == 'views_all' %}active{% endif %}">Views</a>
+            <a href="?sort=popular_week" class="btn btn-outline-primary {% if current_sort == 'popular_week' %}active{% endif %}">Popular (Week)</a>
+        </div>
+    </div>
+    <div class="col-md-6 text-end">
+        {% comment %}
+        <select class="form-select w-auto d-inline-block">
+            <option>All Categories</option>
+            {% for cat in categories %}
+            <option>{{ cat.name }}</option>
+            {% endfor %}
+        </select>
+        {% endcomment %}
+    </div>
+</div>
+
+<div class="row">
+    {% for post in posts %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100">
+            {% if post.image %}
+            <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}" style="height: 200px; object-fit: cover;">
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ post.title }}</h5>
+                <p class="card-text text-muted small">
+                    Category: {{ post.category.name|default:"No Category" }}
+                </p>
+                <p class="card-text flex-grow-1">
+                    {{ post.content|striptags|truncatechars:100 }}
+                </p>
+                <a href="{% url 'post:detail' pk=post.pk %}" class="btn btn-primary mt-auto">Read More &rarr;</a>
+            </div>
+            <div class="card-footer text-muted small">
+                Published: {{ post.created_at|date:"d M Y" }} | Views: {{ post.views_count }}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p class="alert alert-warning">No approved posts yet.</p>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}
