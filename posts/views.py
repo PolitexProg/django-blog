@@ -3,11 +3,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from django.db.models import Count
-from taggit.models import Tag
+from django.db.models import Count 
+from taggit.models import Tag # pyright: ignore[reportMissingImports]
 
 from .models import Post, Category, Comment
 from .forms import PostCreateForm, CommentForm
+from datetime import timedelta
+from django.utils import timezone
 
 
 class PostListView(ListView):
@@ -19,22 +21,32 @@ class PostListView(ListView):
     def get_queryset(self):
         queryset = Post.objects.filter(is_approved=True)
         sort_by = self.request.GET.get('sort', 'newest')
+        
+        
         if sort_by == 'newest':
             return queryset.order_by('-created_at')
-        elif sort_by == 'views_all':
+        if sort_by in ['popular_week', 'popular_month', 'recommended']:
+            queryset = queryset.annotate(comment_count=Count('comments', distinct=True))
+
+        if sort_by == 'views_all':
             return queryset.order_by('-views_count')
+        
         elif sort_by == 'popular_week':
-            return queryset.annotate(comment_count=Count('comments', distinct=True)).order_by('-comment_count')
+            time_limit = timezone.now() - timedelta(days=7)
+            return queryset.filter(created_at__gte=time_limit).order_by('-comment_count', '-created_at')
+        
         elif sort_by == 'popular_month':
-            return queryset.annotate(comment_count=Count('comments', distinct=True)).order_by('-comment_count')
+            time_limit = timezone.now() - timedelta(days=30)
+            return queryset.filter(created_at__gte=time_limit).order_by('-comment_count', '-created_at')
+        
+        elif sort_by == 'recommended':
+            time_limit = timezone.now() - timedelta(days=180)
+            return queryset.filter(
+                created_at__gte=time_limit,
+                views_count__gte=50
+            ).order_by('-comment_count', '-views_count', '-created_at')
+
         return queryset.order_by('-created_at')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        context['current_sort'] = self.request.GET.get('sort', 'newest')
-        return context
-
 
 class PostListByTagView(ListView):
     model = Post

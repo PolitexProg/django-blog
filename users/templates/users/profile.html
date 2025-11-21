@@ -1,27 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %}Профиль {{ user_profile.username }}{% endblock %}
+{% block title %}Profile {{ user_profile.username }}{% endblock %}
 
 {% block content %}
 <div class="row mt-4">
     <div class="col-md-10 offset-md-1">
         <div class="card shadow-sm p-4">
-            <h1 class="mb-4">Личный кабинет: {{ user_profile.username }}</h1>
+            <h1 class="mb-4">Personal Account: {{ user_profile.username }}</h1>
 
             <p><strong>Email:</strong> {{ user_profile.email }}</p>
-            <p><strong>Дата регистрации:</strong> {{ user_profile.date_joined|date:"d M Y" }}</p>
+            <p><strong>Registration Date:</strong> {{ user_profile.date_joined|date:"d M Y" }}</p>
 
             <hr>
 
             <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab" aria-controls="approved" aria-selected="true">
-                        ✅ Одобренные посты ({{ approved_posts.count }})
+                        ✅ Approved Posts ({{ approved_posts.count }})
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="false">
-                        ⏳ На модерации ({{ pending_posts.count }})
+                        ⏳ Pending Approval ({{ pending_posts.count }})
                     </button>
                 </li>
             </ul>
@@ -34,10 +34,10 @@
                         <a href="{% url 'post:detail' pk=post.pk %}" class="text-decoration-none fw-bold">
                             {{ post.title }}
                         </a>
-                        <span class="badge bg-success">Одобрен</span>
+                        <span class="badge bg-success">Approved</span>
                     </div>
                     {% empty %}
-                    <p class="text-muted">У вас пока нет одобренных постов.</p>
+                    <p class="text-muted">You don't have any approved posts yet.</p>
                     {% endfor %}
                 </div>
 
@@ -48,16 +48,16 @@
                             {{ post.title }}
                             <small class="ms-3">({{ post.created_at|date:"d M Y" }})</small>
                         </span>
-                        <span class="badge bg-warning text-dark">На модерации</span>
+                        <span class="badge bg-warning text-dark">Pending Moderation</span>
                     </div>
                     {% empty %}
-                    <p class="text-muted">У вас нет постов в ожидании одобрения.</p>
+                    <p class="text-muted">You have no posts waiting for approval.</p>
                     {% endfor %}
                 </div>
             </div>
 
             <hr>
-            <a href="{% url 'users:logout' %}" class="btn btn-warning mt-3">Выйти из аккаунта</a>
+            <a href="{% url 'users:logout' %}" class="btn btn-warning mt-3">Log Out of Account</a>
         </div>
     </div>
 </div>
